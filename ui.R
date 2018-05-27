@@ -19,13 +19,38 @@ dashboardPage(
   dashboardBody(
     tabItems(
       tabItem("t-test",
+              tags$head(
+                # Some css to style the div to make it more easily visible
+                tags$style(
+                  '#outDiv{
+        height:150px;
+        overflow-y:scroll;
+        border: 1px solid black;
+        border-radius:15px;
+        padding:15px;
+      }
+      '
+                ),
+                # Custom shiny to javascript binding
+                # scrolls "outDiv" to bottom once called
+                tags$script(
+                  '
+      Shiny.addCustomMessageHandler("scrollCallback",
+        function(color) {
+          var objDiv = document.getElementById("outDiv");
+          objDiv.scrollTop = objDiv.scrollHeight;
+        }
+      );'
+                )
+              ),
               # The info box aka how-to
               fluidRow(
                 column(width=12,
                        box(width = NULL, solidHeader = TRUE,
                            status = "warning",
-                           title="Steps to do a t-test using this app"))
-                       ),
+                           title="Steps to do a t-test using this app",
+                           htmlOutput("steps"))
+                       )),
               # The upload data box
               fluidRow(
                 column(width=5,
@@ -67,7 +92,7 @@ dashboardPage(
                            actionButton("understand", "I understand the assumptions and the assumptions are fulfilled"),
                            br(),
                            br(),
-                           verbatimTextOutput("class"),
+                           textOutput("class"),
                            br(),
                            br(),
                            htmlOutput("headArg"),
@@ -80,7 +105,7 @@ dashboardPage(
                                     column(width=2,
                                            br(),
                                            actionButton("startTTest", "Compute t-test"))),
-                           verbatimTextOutput("result")
+                           htmlOutput("result")
                            ))
               )),
       tabItem("examples",
